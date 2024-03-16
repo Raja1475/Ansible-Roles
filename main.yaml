@@ -1,0 +1,5 @@
+- name: configure roboshop
+  hosts: mondodb
+  become: yes
+  roles:
+  - mongodb
