@@ -1,0 +1,11 @@
+# creating roboshop  user
+- name: check roboshop user exist or not
+  ansible.builtin.command: id roboshop
+  register: out #output is variable name
+  ignore_errors: true
+
+- when: out.rc != 0
+  name: create user roboshop
+  become: yes # we need sudo access for this task only
+  ansible.builtin.user:
+    name: roboshop
