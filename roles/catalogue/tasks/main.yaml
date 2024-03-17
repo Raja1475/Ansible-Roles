@@ -7,3 +7,31 @@
   ansible.builtin.import_role:
     name: common
     tasks_from: app-setup
+
+- name: install dependencies
+  ansible.builtin.command: npm install
+  args:
+    chdir: /app
+
+- name: demon service
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: systemd-setup
+
+- name: copy mongo repo to yum.repos.d
+  ansible.builtin.copy:
+    src: mongodb.repo
+    dest: /etc/yum.repos.d/mongo.repo
+
+- name: Install MongoDB
+  ansible.builtin.yum:
+    name: mongodb-org-shell
+    state: installed
+
+- name: load catalogue data
+  ansible.builtin.command: mongo --host mongodb.joindevops.online < /app/schema/catalogue.js
+
+- name: restart catalogue
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: restart-service
